@@ -4,7 +4,6 @@ import time
 import os
 from dotenv import load_dotenv
 
-# Load API key from .env file (or set it directly)
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
@@ -18,7 +17,6 @@ def generate_headlines(num_per_bias=7):
     """Generate satirical headlines leveraging different cognitive biases using OpenAI API"""
     headlines = []
     
-    # Create prompts and call API for each bias type
     for bias_type, bias_description in BIASES.items():
         for i in range(num_per_bias):
             prompt = f"""Generate 1 satirical news headline that leverages {bias_type}.
@@ -41,29 +39,21 @@ def generate_headlines(num_per_bias=7):
                     max_tokens=50
                 )
                 
-                # Extract headline from response
                 headline = response.choices[0].message.content.strip().strip('"')
                 
-                # Add to our collection
                 headlines.append({
                     "headline_id": len(headlines) + 1,
                     "bias_type": bias_type,
                     "headline": headline
                 })
                 
-                # Display progress
                 print(f"Generated ({bias_type}): {headline}")
-                
-                # Avoid rate limits
                 time.sleep(1)
                 
             except Exception as e:
                 print(f"Error generating headline: {e}")
     
-    # Convert to DataFrame
     df = pd.DataFrame(headlines)
-    
-    # Save headlines to CSV
     df.to_csv("generated_headlines.csv", index=False)
     print(f"Generated {len(headlines)} headlines and saved to generated_headlines.csv")
     
